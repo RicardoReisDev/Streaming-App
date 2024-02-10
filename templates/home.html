@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-Br">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+	<title>Streaming App</title>
+</head>
+
+<body>
+	<div class="container">
+		<div class="videos">
+			<h2>Vídeos Disponíveis</h2>
+			<ul> {% for video in videos %} <li>
+					<h3>{{ video.title }}</h3> {% if 'youtube.com' in video.url %} <div class="video-container">
+						<div class="youtube-video" data-embed="{{ video.url }}"></div>
+					</div> {% else %} <video width="320" height="240" controls>
+						<source src="{{ video.url }}" type="video/mp4"> Seu navegador não suporta o elemento de vídeo.
+					</video> {% endif %}
+				</li> {% endfor %} </ul>
+		</div>
+		<h2>Adicionar Novo Vídeo</h2>
+		<form method="POST">
+			{{ form.hidden_tag() }}
+			<p>{{ form.title.label }} {{ form.title() }}</p>
+			<p>{{ form.url.label }} {{ form.url() }}</p>
+			<p>{{ form.submit() }}</p>
+		</form>
+	</div>
+	<script src="https://www.youtube.com/iframe_api"></script>
+	<script>
+		function onPlayerError(event) {
+		    console.error('Ocorreu um erro no player:', event.data);
+		}
+		
+		function onYouTubeIframeAPIReady() {
+		    var iframes = document.querySelectorAll('.youtube-video');
+		    iframes.forEach(function (iframe) {
+		var videoId = iframe.getAttribute('data-embed');
+		var player = new YT.Player(iframe, {
+		    height: '240',
+		    width: '320',
+		    videoId: videoId,
+		    events: {
+		        'onError': onPlayerError,
+		    },
+		});
+		    });
+		}
+		
+	</script>
+</body>
+
+</html>
